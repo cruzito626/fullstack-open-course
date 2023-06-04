@@ -1,0 +1,6 @@
+note over browser:
+browser executes the event handler that renders notes to display
+browser send data { content: "first note", date: "2023-06-04" } to server
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
