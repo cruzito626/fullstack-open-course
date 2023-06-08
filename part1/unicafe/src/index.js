@@ -21,14 +21,21 @@ const Statistics = ({ good, neutral, bad }) => {
   const total = good + neutral + bad;
   const average = () => (good - bad) / total;
   const percentage = () => (good * 100) / total;
+
   return (
     <>
       <H1 title="statistics" />
-      <Display text={goodText} value={good} />
-      <Display text={neutralText} value={neutral} />
-      <Display text={badText} value={bad} />
-      <Display text="average" value={average()} />
-      <Display text="positive" value={percentage() + " %"} />
+      {total === 0 ? (
+        <p>No feedback given</p>
+      ) : (
+        <>
+          <Display text={goodText} value={good} />
+          <Display text={neutralText} value={neutral} />
+          <Display text={badText} value={bad} />
+          <Display text="average" value={average()} />
+          <Display text="positive" value={percentage() + " %"} />
+        </>
+      )}
     </>
   );
 };
