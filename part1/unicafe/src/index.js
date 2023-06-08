@@ -17,21 +17,34 @@ const App = () => {
   const [good, setGood] = useState(0);
   const [neutral, setNeutral] = useState(0);
   const [bad, setBad] = useState(0);
+  const [total, setTotal] = useState(0);
+
+  const plusOne = (value, setValue) => {
+    return () => {
+      setTotal(total + 1);
+      return setValue(value + 1);
+    };
+  };
 
   const goodText = "good";
   const neutralText = "neutral";
   const badText = "bad";
 
+  const average = () => (good - bad) / total;
+  const percentage = () => (good * 100) / total;
+
   return (
     <div>
       <H1 title="give feedback" />
-      <Button handleClick={() => setGood(good + 1)} text={goodText} />
-      <Button handleClick={() => setNeutral(neutral + 1)} text={neutralText} />
-      <Button handleClick={() => setBad(bad + 1)} text={badText} />
+      <Button handleClick={plusOne(good, setGood)} text={goodText} />
+      <Button handleClick={plusOne(neutral, setNeutral)} text={neutralText} />
+      <Button handleClick={plusOne(bad, setBad)} text={badText} />
       <H1 title="statistics" />
       <Display text={goodText} value={good} />
       <Display text={neutralText} value={neutral} />
       <Display text={badText} value={bad} />
+      <Display text="average" value={average()} />
+      <Display text="positive" value={percentage() + " %"} />
     </div>
   );
 };
