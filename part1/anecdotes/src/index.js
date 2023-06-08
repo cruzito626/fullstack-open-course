@@ -5,23 +5,27 @@ const getRandomInt = (max) => Math.floor(Math.random() * max);
 
 const App = ({ anecdotes }) => {
   const [selected, setSelected] = useState(0);
-  const [votes, setVotes] = useState({});
+  const [votes, setVotes] = useState(anecdotes.map((_) => 0));
   const handleClickNextAnecdote = () =>
     setSelected(getRandomInt(anecdotes.length));
 
   const handleClickVoteAnecdote = () => {
-    const newVotes = {...votes};
-    newVotes[selected]  = (votes[selected] ?? 0) + 1;
+    const newVotes = [...votes];
+    newVotes[selected] += 1;
     setVotes(newVotes);
-  }
+  };
 
-    console.log({votes})
+  const indexMostVotes = votes.indexOf(Math.max(...votes));
+
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <p>{anecdotes[selected]}</p>
-      <p>has {votes[selected] ?? 0} votes</p>
+      <p>has {votes[selected]} votes</p>
       <button onClick={handleClickVoteAnecdote}>vote</button>
       <button onClick={handleClickNextAnecdote}>next anecdote</button>
+      <h1>Anecdote with most votes</h1>
+      <p>{anecdotes[indexMostVotes]}</p>
     </div>
   );
 };
