@@ -1,22 +1,27 @@
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
 
-const getRandomInt = (max) => {
-  console.log({ max });
-  return Math.floor(Math.random() * max);
-};
+const getRandomInt = (max) => Math.floor(Math.random() * max);
 
 const App = ({ anecdotes }) => {
   const [selected, setSelected] = useState(0);
-  const handleClick = () => {
-    const a = getRandomInt(anecdotes.length);
-    console.log({ a });
-    return setSelected(a);
-  };
+  const [votes, setVotes] = useState({});
+  const handleClickNextAnecdote = () =>
+    setSelected(getRandomInt(anecdotes.length));
+
+  const handleClickVoteAnecdote = () => {
+    const newVotes = {...votes};
+    newVotes[selected]  = (votes[selected] ?? 0) + 1;
+    setVotes(newVotes);
+  }
+
+    console.log({votes})
   return (
     <div>
       <p>{anecdotes[selected]}</p>
-      <button onClick={handleClick}>next anecdote</button>
+      <p>has {votes[selected] ?? 0} votes</p>
+      <button onClick={handleClickVoteAnecdote}>vote</button>
+      <button onClick={handleClickNextAnecdote}>next anecdote</button>
     </div>
   );
 };
