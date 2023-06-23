@@ -1,87 +1,56 @@
 import React, { useState } from "react";
 
+import Filter from "./components/Filter";
+import PersonForm from "./components/PersonForm";
+import Persons from "./components/Persons";
+
 const App = () => {
+  const initPerson = { name: "", number: "" };
   const [persons, setPersons] = useState([
     { name: "Arto Hellas", number: "040-123456" },
     { name: "Ada Lovelace", number: "39-44-5323523" },
     { name: "Dan Abramov", number: "12-43-234345" },
     { name: "Mary Poppendieck", number: "39-23-6423122" },
   ]);
-  const [newNumberPhone, setNewNumberPhone] = useState("");
-  const [newName, setNewName] = useState("");
 
-  const handlerOnChangeInputName = (event) => {
-    setNewName(event.target.value);
-  };
+  const [person, setPerson] = useState(initPerson);
 
-  const handlerOnChangeInputNumber = (event) => {
-    setNewNumberPhone(event.target.value);
-  };
-
-  const handlerOnSubmit = (event) => {
-    event.preventDefault();
-
-    if (persons.some(({ name }) => name === newName.trim())) {
-      alert(`${newName} is already added to phonebook`);
+  const handlerOnSubmit = (newPerson) => {
+    if (persons.some(({ name }) => name === newPerson.name.trim())) {
+      alert(`${newPerson.name} is already added to phonebook`);
     } else {
-      const newPerson = {
-        name: newName,
-        number: newNumberPhone,
-      };
       const newPersons = persons.concat(newPerson);
       setPersons(newPersons);
       setFiltered(newPersons);
-      setNewName("");
-      setNewNumberPhone("");
+      setPerson(initPerson);
     }
   };
 
   const [filtered, setFiltered] = useState([...persons]);
-  const [filter, setFilter] = useState("");
 
-  const handlerOnChangeInputFilter = (event) => {
-    const newFilter = event.target.value;
-
-    if (!newFilter?.trim()) {
-      setFiltered([...persons]);
-    } else {
-      setFiltered(
-        persons.filter(({ name }) =>
-          name.toLocaleLowerCase().includes(newFilter.toLocaleLowerCase())
-        )
-      );
-    }
-    setFilter(newFilter);
+  const handlerOnChangeFilter = (filter) => {
+    setFiltered(
+      !filter?.trim()
+        ? [...persons]
+        : persons.filter(({ name }) =>
+            name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+          )
+    );
   };
+
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter show with{" "}
-        <input value={filter} onChange={handlerOnChangeInputFilter} />
-      </div>
-      <h2>Phonebook</h2>
-      <form onSubmit={handlerOnSubmit}>
-        <div>
-          name: <input value={newName} onChange={handlerOnChangeInputName} />
-          <div>
-            number:{" "}
-            <input
-              value={newNumberPhone}
-              onChange={handlerOnChangeInputNumber}
-            />
-          </div>
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      {filtered.map(({ name, number }) => (
-        <p key={name}>
-          {name} {number}
-        </p>
-      ))}
+
+      <Filter onChange={handlerOnChangeFilter} />
+
+      <h3>Add a new</h3>
+
+      <PersonForm onSubmit={handlerOnSubmit} defaultValues={person} />
+
+      <h3>Numbers</h3>
+
+      <Persons persons={filtered} />
     </div>
   );
 };
