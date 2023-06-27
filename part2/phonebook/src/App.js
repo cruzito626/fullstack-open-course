@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+import axios from "axios";
 
 import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
@@ -6,14 +8,20 @@ import Persons from "./components/Persons";
 
 const App = () => {
   const initPerson = { name: "", number: "" };
-  const [persons, setPersons] = useState([
-    { name: "Arto Hellas", number: "040-123456" },
-    { name: "Ada Lovelace", number: "39-44-5323523" },
-    { name: "Dan Abramov", number: "12-43-234345" },
-    { name: "Mary Poppendieck", number: "39-23-6423122" },
-  ]);
+  const [persons, setPersons] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+
 
   const [person, setPerson] = useState(initPerson);
+
+  useEffect(() => {
+    axios
+    .get("http://localhost:3001/persons").then((response) => {
+      console.log()
+      setPersons(response.data);
+      setFiltered(response.data);
+    });
+  }, []);
 
   const handlerOnSubmit = (newPerson) => {
     if (persons.some(({ name }) => name === newPerson.name.trim())) {
@@ -26,7 +34,6 @@ const App = () => {
     }
   };
 
-  const [filtered, setFiltered] = useState([...persons]);
 
   const handlerOnChangeFilter = (filter) => {
     setFiltered(
