@@ -26,12 +26,20 @@ const App = () => {
     );
   };
 
+  const handlerOnShowCountry = (name) => {
+    axios
+      .get(`https://restcountries.com/v3.1/name/${name}`)
+      .then((response) => {
+        setFilteredCountries(response.data);
+      });
+  };
 
   return (
     <div className="App">
       <Filter onChange={handlerOnChangeFilter} />
       <Content
         countries={filteredCountries}
+        onShowCountry={handlerOnShowCountry}
       />
     </div>
   );
