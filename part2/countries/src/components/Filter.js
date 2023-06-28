@@ -1,17 +1,14 @@
-import React, {useState} from 'react';
+import React from 'react';
 
-const Filter = ({onChange}) => {
-    const [filter, setFilter] = useState("");
+const Filter = ({value, onChange}) => {
 
     const handlerOnChange = (event) => {
-        const newFilter = event.target.value;
-        onChange(newFilter);
-        setFilter(newFilter);
+        onChange(event.target.value);
     }
 
     return (
         <div>
-            find countries <input value={filter} onChange={handlerOnChange}/>
+            find countries <input value={value} onChange={handlerOnChange}/>
         </div>
     );
 };

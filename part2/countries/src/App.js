@@ -7,31 +7,40 @@ import Content from "./components/Content";
 
 const App = () => {
   const [countries, setCountries] = useState([]);
-  const [filteredCountries, setFilteredCountries] = useState([]);
+  const [filter, setFilter] = useState("");
+  const [isOfficial, setIsOfficial] = useState(false);
 
   useEffect(() => {
     axios.get("https://restcountries.com/v3.1/all").then((response) => {
       setCountries(response.data);
-      setFilteredCountries(response.data);
     });
   }, []);
 
   const handlerOnChangeFilter = (filter) => {
-    setFilteredCountries(
-      !filter?.trim()
-        ? countries
-        : countries.filter(({ name }) =>
-            name.common?.toLowerCase()?.includes(filter)
-          )
-    );
+    setFilter(filter);
+    setIsOfficial(false);
   };
 
+  const handlerOnShowCountry = (filter) => {
+    setFilter(filter);
+    setIsOfficial(true);
+  };
+
+  const filteredCountries = !filter?.trim()
+    ? countries
+    : countries.filter(({ name }) => {
+        const { common, official } = name;
+        return (isOfficial ? official : common)
+          ?.toLowerCase()
+          ?.includes(filter.toLowerCase());
+      });
 
   return (
     <div className="App">
-      <Filter onChange={handlerOnChangeFilter} />
+      <Filter value={filter} onChange={handlerOnChangeFilter} />
       <Content
         countries={filteredCountries}
+        onShowCountry={handlerOnShowCountry}
       />
     </div>
   );

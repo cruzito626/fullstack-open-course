@@ -11,7 +11,7 @@ const Country = ({ country }) => {
   return (
     <div>
       <h1>{common}</h1>
-      <p>capital {capital.join(" ")}</p>
+      <p>capital {capital?.join(" ")}</p>
       <p>populaton {population}</p>
       <ul>
         {Object.entries(languages).map(([key, value]) => (
