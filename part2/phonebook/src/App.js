@@ -8,14 +8,13 @@ import servicePersons from "./services/persons";
 const App = () => {
   const initPerson = { name: "", number: "" };
   const [persons, setPersons] = useState([]);
-  const [filtered, setFiltered] = useState([]);
+  const [filter, setFilter] = useState("");
 
   const [person, setPerson] = useState(initPerson);
-  console.log(servicePersons);
+
   useEffect(() => {
     servicePersons.getAll().then((initialPersons) => {
       setPersons(initialPersons);
-      setFiltered(initialPersons);
     });
   }, []);
 
@@ -25,20 +24,30 @@ const App = () => {
     } else {
       const newPersons = persons.concat(newPerson);
       setPersons(newPersons);
-      setFiltered(newPersons);
       setPerson(initPerson);
     }
   };
 
   const handlerOnChangeFilter = (filter) => {
-    setFiltered(
-      !filter?.trim()
-        ? [...persons]
-        : persons.filter(({ name }) =>
-            name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
-          )
-    );
+    if (filter.trim() === "") setFilter(filter);
   };
+
+  const handlerOnDeletePerson = ({ id, name }) => {
+    // eslint-disable-next-line no-restricted-globals
+    const isConfirm = confirm(`Delete ${name}`);
+    if (isConfirm) {
+      servicePersons.remove(id).then(() => {
+        setPersons(persons.filter(({ id: idPerson }) => idPerson !== id));
+      });
+    }
+  };
+
+  const filteredPersons =
+    filter.trim() === ""
+      ? persons
+      : persons.filter(({ name }) =>
+          name.toLocaleLowerCase().includes(filter.toLocaleLowerCase())
+        );
 
   return (
     <div>
@@ -52,7 +61,10 @@ const App = () => {
 
       <h3>Numbers</h3>
 
-      <Persons persons={filtered} />
+      <Persons
+        persons={filteredPersons}
+        onDeletePerson={handlerOnDeletePerson}
+      />
     </div>
   );
 };
