@@ -19,17 +19,44 @@ const App = () => {
   }, []);
 
   const handlerOnSubmit = (newPerson) => {
-    if (persons.some(({ name }) => name === newPerson.name.trim())) {
-      alert(`${newPerson.name} is already added to phonebook`);
+    const personFound = persons.find(
+      ({ name }) =>
+        newPerson.name.toLocaleLowerCase() === name.toLocaleLowerCase()
+    );
+
+    if (!personFound) {
+      servicePersons
+        .create(newPerson)
+        .then(() => setPersons(persons.concat(newPerson)));
     } else {
-      const newPersons = persons.concat(newPerson);
-      setPersons(newPersons);
-      setPerson(initPerson);
+      // eslint-disable-next-line no-restricted-globals
+      const isConfirm = confirm(
+        `${personFound.name} is already added to phonebook, replace the old number with a new one?`
+      );
+      if (isConfirm) {
+        servicePersons
+          .update(personFound.id, newPerson)
+          .then((returnedPerson) =>
+            setPersons(
+              persons.map((p) =>
+                p.id === returnedPerson.id ? returnedPerson : p
+              )
+            )
+          )
+          .catch((error) => {
+            alert(
+              `the person '${newPerson.name}' was already deleted from server`
+            );
+            setPersons(persons.filter((p) => p.id !== personFound.id));
+          });
+      }
     }
+
+    setPerson(initPerson);
   };
 
   const handlerOnChangeFilter = (filter) => {
-    if (filter.trim() === "") setFilter(filter);
+    if (filter.trim() !== "") setFilter(filter);
   };
 
   const handlerOnDeletePerson = ({ id, name }) => {
