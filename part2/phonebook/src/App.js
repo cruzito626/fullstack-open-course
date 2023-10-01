@@ -1,14 +1,19 @@
 import React, { useState, useEffect } from "react";
 
 import Filter from "./components/Filter";
+import Notification from "./components/Notification";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import servicePersons from "./services/persons";
+
+import "./index.css";
 
 const App = () => {
   const initPerson = { name: "", number: "" };
   const [persons, setPersons] = useState([]);
   const [filter, setFilter] = useState("");
+  const [message, setMessage] = useState(null);
+  const [classNameCSS, setClassNameCSS] = useState("");
 
   const [person, setPerson] = useState(initPerson);
 
@@ -18,6 +23,14 @@ const App = () => {
     });
   }, []);
 
+  const setupNotification = (message, classNamecss) => {
+    setMessage(message);
+    setClassNameCSS(classNamecss);
+    setTimeout(() => {
+      setMessage(null);
+    }, 5000);
+  };
+
   const handlerOnSubmit = (newPerson) => {
     const personFound = persons.find(
       ({ name }) =>
@@ -25,9 +38,10 @@ const App = () => {
     );
 
     if (!personFound) {
-      servicePersons
-        .create(newPerson)
-        .then(() => setPersons(persons.concat(newPerson)));
+      servicePersons.create(newPerson).then((returnedPerson) => {
+        setupNotification(newPerson.name, "success");
+        setPersons(persons.concat(returnedPerson));
+      });
     } else {
       // eslint-disable-next-line no-restricted-globals
       const isConfirm = confirm(
@@ -79,6 +93,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message} className={classNameCSS} />
 
       <Filter onChange={handlerOnChangeFilter} />
 
