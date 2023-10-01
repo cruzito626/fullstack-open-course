@@ -50,16 +50,18 @@ const App = () => {
       if (isConfirm) {
         servicePersons
           .update(personFound.id, newPerson)
-          .then((returnedPerson) =>
+          .then((returnedPerson) => {
+            setupNotification(returnedPerson.name, "success");
             setPersons(
               persons.map((p) =>
                 p.id === returnedPerson.id ? returnedPerson : p
               )
-            )
-          )
+            );
+          })
           .catch((error) => {
-            alert(
-              `the person '${newPerson.name}' was already deleted from server`
+            setupNotification(
+              `The person '${newPerson.name}' was already deleted from server`,
+              "alert"
             );
             setPersons(persons.filter((p) => p.id !== personFound.id));
           });
